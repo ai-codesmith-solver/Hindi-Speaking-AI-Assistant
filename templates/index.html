@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hindi Voice Assistant 🤖</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 हिंदी वॉइस असिस्टेंट</h1>
+        <p class="subtitle">Your Hindi-speaking AI Buddy</p>
+
+        <button id="startBtn">🤖 Start Your Buddy</button>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        document.getElementById("startBtn").addEventListener("click", () => {
+            const output = document.getElementById("output");
+            output.innerHTML = "<p>🟢 Connecting to your Hindi buddy...</p>";
+
+            const eventSource = new EventSource("/stream");
+
+            eventSource.onmessage = function(event) {
+                const p = document.createElement("p");
+                p.textContent = event.data;
+                output.appendChild(p);
+                output.scrollTop = output.scrollHeight;
+            };
+
+            eventSource.onerror = function() {
+                const p = document.createElement("p");
+                p.textContent = "❌ Connection lost.";
+                output.appendChild(p);
+                eventSource.close();
+            };
+        });
+    </script>
+</body>
+</html>
